@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Custom GPT Chat</title>
+</head>
+<body>
+    <h1>Chat with Custom GPT</h1>
+    <div id="chatBox" style="border:1px solid #ccc; padding:10px; margin-bottom:10px; height:300px; overflow:auto;">
+        <!-- Chat will be displayed here -->
+    </div>
+    <input type="text" id="userInput" placeholder="Type your message here..." style="width:70%; padding:10px;"/>
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        function sendMessage() {
+            var input = document.getElementById("userInput").value; // Get user input
+            if (input.trim() === '') return; // Don't send empty messages
+
+            addMessageToChat("You: " + input); // Display user message in chat
+
+            var yourBackendEndpoint = "http://localhost:3000/send-to-gpt";
+
+
+            var data = {
+                prompt: input,
+            };
+
+            fetch(yourBackendEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                addMessageToChat("GPT: " + data.text); // Display GPT response in chat
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                addMessageToChat("GPT: I'm sorry, I couldn't fetch a response.");
+            });
+
+            document.getElementById("userInput").value = ''; // Clear input field
+        }
+
+        function addMessageToChat(message) {
+            var chatBox = document.getElementById("chatBox");
+            var messageElement = document.createElement("div");
+            messageElement.textContent = message;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+        }
+    </script>
+</body>
+</html>
