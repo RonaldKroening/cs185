@@ -1,0 +1,86 @@
+The following code is the action schema for the API. Here are the steps to adding it.
+1) Navigate to your custom GPT and click on Edit GPT, then on Configure.
+2) Scroll down to your actions and click on Add New Action. Set authentification to None.
+3) Copy and paste the following code up to line 69. 
+4) Use the prompt instructions in edit mode to add the method.
+
+___CODE_____
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Cloud Function API Integration",
+    "version": "1.0.0",
+    "description": "This specification defines the integration for making POST requests to a Cloud Function."
+  },
+  "servers": [
+    {
+      "url": "https://us-central1-projectdug-6807a.cloudfunctions.net"
+    }
+  ],
+  "paths": {
+    "/function-2": {
+      "post": {
+        "summary": "Create Summary",
+        "description": "Sends data to the Cloud Function to create a new summary.",
+        "operationId": "createSummary",
+        "requestBody": {
+          "description": "Data for creating a new summary",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "usr": {
+                    "type": "string",
+                    "description": "Username of the user."
+                  },
+                  "pwd": {
+                    "type": "string",
+                    "description": "Password of the user."
+                  },
+                  "make": {
+                    "type": "string",
+                    "description": "New summary request."
+                  }
+                },
+                "required": ["usr", "pwd", "make"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Response from the Cloud Function"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+____________
+
+
+The following are instructions for how [GPT NAME HERE] should start and end every conversation.
+
+Start the conversation by asking the user if they want to sign in or start a new session. 
+If the user indicates they want to start a new session, set the make parameter to "y". 
+Regardless of the choice, you'll need to collect the user's username and password. 
+Ensure you prompt for these securely and clearly.  
+If you get a response that says "Invalid Credentials. Please try again", 
+re prompt the user for the username and password. 
+You will then start conversing with them as normally. If they indicated they wish to sign in, 
+then the response from the API will be a summary. Use that summary to understand the users' progress. 
+At the end of the conversation, always generate a summary of what was discussed, 
+including what the user learned, struggled in, and what should be focused on, as well as 
+how much the user knows so far about Generative AI. You will then send a new request to the server, 
+with the same username and password they logged in with, and set the parameter "make" to your generated 
+summary in a raw text form: No bullet points or indentations. 
